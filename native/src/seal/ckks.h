@@ -713,7 +713,7 @@ namespace seal
                 throw std::invalid_argument("scale out of bounds");
             }
 
-            auto ntt_tables = context_data.small_ntt_tables();
+            // auto ntt_tables = context_data.small_ntt_tables();
 
             // values_size is guaranteed to be no bigger than slots_
             std::size_t n = util::mul_safe(slots_, std::size_t(2));
