@@ -846,6 +846,9 @@ namespace seal
             }
         }
 
+        // End of Edu's code
+        // Begin of Edu's code
+
         void encode_internal(
             const std::uint64_t *values, std::size_t values_size, parms_id_type parms_id, double scale, Plaintext &destination,
             MemoryPoolHandle pool) const
@@ -866,6 +869,8 @@ namespace seal
             auto &coeff_modulus = parms.coeff_modulus();
             std::size_t coeff_modulus_size = coeff_modulus.size();
             std::size_t coeff_count = parms.poly_modulus_degree();
+            // values_size is guaranteed to be no bigger than slots_
+            std::size_t n = util::mul_safe(slots_, std::size_t(2));
             
             if (values_size > coeff_count * slots_)
             {
@@ -881,11 +886,14 @@ namespace seal
             destination.parms_id() = parms_id_zero;
             destination.resize(util::mul_safe(coeff_count, coeff_modulus_size));
 
+            // Copy values to destination
+            for (std::size_t i = 0; i < n; i++)
+                for (std::size_t j = 0; j < coeff_modulus_size; j++)
+                    destination[i + (j * coeff_count)] = values[i + (j * n)];
+
             // Transform to NTT domain
             for (std::size_t i = 0; i < coeff_modulus_size; i++)
-            {
                 util::ntt_negacyclic_harvey(destination.data(i * coeff_count), ntt_tables[i]);
-            }
 
             destination.parms_id() = parms_id;
             destination.scale() = scale;
