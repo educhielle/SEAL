@@ -860,7 +860,14 @@ namespace seal
             {
                 throw std::invalid_argument("values cannot be null");
             }
-            if (values_size > slots_)
+
+            auto &context_data = *context_data_ptr;
+            auto &parms = context_data.parms();
+            auto &coeff_modulus = parms.coeff_modulus();
+            std::size_t coeff_modulus_size = coeff_modulus.size();
+            std::size_t coeff_count = parms.poly_modulus_degree();
+            
+            if (values_size > coeff_count * slots_)
             {
                 throw std::invalid_argument("values_size is too large");
             }
@@ -869,11 +876,6 @@ namespace seal
                 throw std::invalid_argument("pool is uninitialized");
             }
 
-            auto &context_data = *context_data_ptr;
-            auto &parms = context_data.parms();
-            auto &coeff_modulus = parms.coeff_modulus();
-            std::size_t coeff_modulus_size = coeff_modulus.size();
-            std::size_t coeff_count = parms.poly_modulus_degree();
             auto ntt_tables = context_data.small_ntt_tables();
 
             destination.parms_id() = parms_id_zero;
